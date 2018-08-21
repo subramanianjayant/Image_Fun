@@ -3,7 +3,7 @@ cool stuff with CNNs and GANs
 
 ### Scraping the datasets
 ```ImageScraper.py``` scrapes images off Google Images based on any query you enter. You can change the query in the source code and then run ```ImageScraper.py```:
-```
+```bash
 Jayant@Jayant-Spectre-x360:/mnt/c/Users/subra/Desktop/git/Image_Fun$ vi ImageScraper.py
 
 QUERY = 'parrot'
