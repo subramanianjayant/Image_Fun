@@ -12,3 +12,11 @@ Jayant@Jayant-Spectre-x360:/mnt/c/Users/subra/Desktop/git/Image_Fun$ python Imag
 https://www.google.co.in/search?q=parrot&source=lnms&tbm=isch //search URL
 100 //number of images scraped
 ```
+### Processing Images and using Convolutional Neural Network
+```Convnet.py``` contains methods 
+```python
+Convnet.resize_image
+Convnet.process_images
+Convnet.get_convnet
+```
+that can be accessed from other scripts. However, you can also run ```Convnet.py``` directly from the terminal to process the images in ```Image_Fun/Pictures``` and train the Convnet.
