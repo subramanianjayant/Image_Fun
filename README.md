@@ -13,6 +13,6 @@ https://www.google.co.in/search?q=parrot&source=lnms&tbm=isch //search URL
 100 //number of images scraped
 ```
 ### Processing Images and using Convolutional Neural Network
-Simply run ```Convnet.py``` and a CNN will be trained and tested on the image data provided
+Simply run ```ConvNet.py``` and a CNN will be trained and tested on the image data provided
 in ```Image_Fun/Pictures```. Currently classifies images with ~87% accuracy.
 
