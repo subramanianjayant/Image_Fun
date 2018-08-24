@@ -123,3 +123,9 @@ for iter in range(100):
 
     if train_gen:
         session.run(optimizer_gen, feed_dict={noise: n, is_training:True})
+
+    print(i, d_ls,gen_ls,d_real_ls,d_fake_ls)
+
+    generated_images = session.run(gen, feed_dict={noise: n, is_training:False})
+    plt.imshow(generated_images[0], interpolation='nearest')
+    plt.show()
