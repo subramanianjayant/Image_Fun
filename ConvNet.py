@@ -1,7 +1,7 @@
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D,Dense,Flatten,Dropout,Activation
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras import optimizers
 import numpy as np
 import ImagePreprocessing as ipp
@@ -25,18 +25,22 @@ def get_convnet():
     model.add(Flatten())
     #Fully connected layer
     model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.3))
     #sigmoid output layer
     model.add(Dense(1,activation = 'sigmoid'))
 
-    sgd = optimizers.SGD(lr = 0.00005, momentum = 0.9, decay = 0, nesterov=True)
+    sgd = optimizers.SGD(lr = 0.0001, momentum = 0.9, decay = 1e-6, nesterov=True)
 
     model.compile(loss = 'binary_crossentropy',optimizer=sgd,metrics=['accuracy'])
     return model
 
 def train_model(model,features_train,labels_train,val_size=0.2):
     stop = EarlyStopping(monitor='val_loss',patience=5)
+    save_best = ModelCheckpoint('CNNweights.hdf5',monitor='val_loss'
+    ,save_best_only=True,save_weights_only=True,period=1)
     model.fit(features_train,labels_train,epochs = 50,callbacks=[stop]
         ,batch_size = 20,validation_split=val_size)
+    model.load_weights('CNNweights.hdf5')
     return model
 
 def test_model(model,features_test,labels_test):
