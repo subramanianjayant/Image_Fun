@@ -42,6 +42,7 @@ def discriminator(input,reuse=None):
             ,padding='same',activation = leaky_relu)
         clf = tf.contrib.layers.flatten(clf)
         clf = tf.layers.dense(clf,units=64,activation=leaky_relu)
+        clf = tf.nn.dropout(clf,keep_prob=0.7)
         clf = tf.layers.dense(clf,units=1,activation=tf.nn.sigmoid)
         return clf
 
@@ -88,8 +89,8 @@ loss_disc = tf.reduce_mean(0.5*(loss_disc_true+loss_disc_false))
 
 update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 with tf.control_dependencies(update_ops):
-    optimizer_disc = tf.train.RMSPropOptimizer(learning_rate = 0.00005).minimize(loss_disc, var_list=disc_vars)
-    optimizer_gen = tf.train.RMSPropOptimizer(learning_rate = 0.00005).minimize(loss_gen, var_list=gen_vars)
+    optimizer_disc = tf.train.RMSPropOptimizer(learning_rate = 0.001).minimize(loss_disc, var_list=disc_vars)
+    optimizer_gen = tf.train.RMSPropOptimizer(learning_rate = 0.001).minimize(loss_gen, var_list=gen_vars)
 
 session = tf.Session()
 session.run(tf.global_variables_initializer())
@@ -99,9 +100,15 @@ for iter in range(100):
     train_disc = True
     train_gen = True
 
-    n = np.random.uniform(0.0,1.0,[batch_size,n_noise]).astype(np.float32)
+    n = np.random.randint(0,256,[batch_size,n_noise]).astype(np.float32)
     batch = [np.reshape(img, [height,width,depth]) for img in features]
 
+    #prints a generated image
+    generated_images = session.run(gen, feed_dict={noise: n, is_training:False})
+    plt.imshow(generated_images[0], interpolation='nearest')
+    plt.show()
+
+    print('computing losses')
     d_real_ls, d_fake_ls, gen_ls, d_ls = session.run([loss_disc_true, loss_disc_false, loss_gen, loss_disc],
         feed_dict={X_in: batch, noise: n, is_training:True})
 
@@ -109,6 +116,8 @@ for iter in range(100):
     d_fake_ls = np.mean(d_fake_ls)
     gen_ls = gen_ls
     d_ls = d_ls
+    print('iteration %d | discriminator_loss = %f\t generator_loss = %f'
+        %(iter,d_ls,gen_ls))
 
     #stops training if loss deviance becomes too high
     if gen_ls*1.5<d_ls:
@@ -119,13 +128,11 @@ for iter in range(100):
         pass
 
     if train_disc:
+        print('training discriminator')
         session.run(optimizer_disc,feed_dict={noise: n, X_in: batch, is_training:True})
 
     if train_gen:
+        print('training generator')
         session.run(optimizer_gen, feed_dict={noise: n, is_training:True})
 
-    print(i, d_ls,gen_ls,d_real_ls,d_fake_ls)
-
-    generated_images = session.run(gen, feed_dict={noise: n, is_training:False})
-    plt.imshow(generated_images[0], interpolation='nearest')
-    plt.show()
+    print('iteration %d complete\n'%(iter))

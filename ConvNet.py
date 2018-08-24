@@ -36,11 +36,11 @@ def get_convnet():
 
 def train_model(model,features_train,labels_train,val_size=0.2):
     stop = EarlyStopping(monitor='val_loss',patience=5)
-    save_best = ModelCheckpoint('CNNweights.hdf5',monitor='val_loss'
-    ,save_best_only=True,save_weights_only=True,period=1)
+    #save_best = ModelCheckpoint('CNNweights.h5',monitor='val_loss'
+    #    ,save_best_only=True,save_weights_only=True,period=1)
     model.fit(features_train,labels_train,epochs = 50,callbacks=[stop]
         ,batch_size = 20,validation_split=val_size)
-    model.load_weights('CNNweights.hdf5')
+    #model.load_weights('CNNweights.h5')
     return model
 
 def test_model(model,features_test,labels_test):
