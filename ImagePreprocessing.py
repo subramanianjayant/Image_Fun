@@ -21,14 +21,14 @@ def resize_image(image, height, width, depth=3):
     new_image[:prev_size[0],:prev_size[1],:] = image
     return new_image.astype(int)
 
-def process_images(path):
+def process_images(path,height=300,width = 300,depth=3):
     image_data = {}
     for image in os.listdir(path):
         print(image)
         image_data[image]=imread(path+image)
 
     for image in image_data.keys():
-        image_data[image] = resize_image(image_data[image],300,300)
+        image_data[image] = resize_image(image_data[image],height,width,depth)
 
     #plt.imshow(image_data['zebra_34.jpg'],interpolation='nearest')
     #plt.show()
@@ -39,7 +39,7 @@ def process_images(path):
         elif 'zebra' in key:
             labels.append(0)
     labels = np.array(labels).reshape(-1,1)
-    features = np.array(list(image_data.values())).reshape(-1,300,300,3)
+    features = np.array(list(image_data.values())).reshape(-1,height,width,depth)
     return features, labels
 
 if __name__=='__main__':
