@@ -89,14 +89,14 @@ loss_disc = tf.reduce_mean(0.5*(loss_disc_true+loss_disc_false))
 
 update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
 with tf.control_dependencies(update_ops):
-    optimizer_disc = tf.train.RMSPropOptimizer(learning_rate = 0.001).minimize(loss_disc, var_list=disc_vars)
-    optimizer_gen = tf.train.RMSPropOptimizer(learning_rate = 0.001).minimize(loss_gen, var_list=gen_vars)
+    optimizer_disc = tf.train.RMSPropOptimizer(learning_rate = 0.00015).minimize(loss_disc, var_list=disc_vars)
+    optimizer_gen = tf.train.RMSPropOptimizer(learning_rate = 0.00008).minimize(loss_gen, var_list=gen_vars)
 
 session = tf.Session()
 session.run(tf.global_variables_initializer())
 
 #training GAN
-for iter in range(100):
+for iter in range(1,101):
     train_disc = True
     train_gen = True
 
@@ -104,9 +104,10 @@ for iter in range(100):
     batch = [np.reshape(img, [height,width,depth]) for img in features]
 
     #prints a generated image
-    generated_images = session.run(gen, feed_dict={noise: n, is_training:False})
-    plt.imshow(generated_images[0], interpolation='nearest')
-    plt.show()
+    if iter%25==0:
+        generated_images = session.run(gen, feed_dict={noise: n, is_training:False})
+        plt.imshow(generated_images[0], interpolation='nearest')
+        plt.show()
 
     print('computing losses')
     d_real_ls, d_fake_ls, gen_ls, d_ls = session.run([loss_disc_true, loss_disc_false, loss_gen, loss_disc],
@@ -136,3 +137,7 @@ for iter in range(100):
         session.run(optimizer_gen, feed_dict={noise: n, is_training:True})
 
     print('iteration %d complete\n'%(iter))
+
+generated_images = session.run(gen, feed_dict={noise: n, is_training:False})
+plt.imshow(generated_images[0], interpolation='nearest')
+plt.show()
